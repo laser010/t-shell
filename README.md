@@ -16,37 +16,8 @@ illegal you assume full responsiblility.
 ```
 git clone https://github.com/laser010/t-shell
 cd t-shell
-python t-shell.py -hh
+python t-shell.py
 ```
-
-# help
-
-Check who is online
-online?
-
-Choose victem
-<ip> [option]
-or for all victims
-all [option]
-
-Display sysinfo
-<ip> sysinfo
-
-Excute shell command
-<ip> cmd [commands]
-
-Change dir
-<ip> cd dir
-
-List dir
-<ip> lsdir
-
-Get path
-<ip> path
-
-Open url
-<ip> url [url]
-
 
 # About
 
